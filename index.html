@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Especial</title>
+    <style>
+        :root {
+            --primary: #9370DB;
+            --primary-light: #B19CD9;
+            --primary-dark: #7B68EE;
+            --background: #F8F7FF;
+            --text: #333;
+            --white: #fff;
+            --gray: #f0f0f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+        
+        .countdown {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+        
+        .question-container {
+            margin-bottom: 40px;
+            display: none;
+        }
+        
+        .question-container.active {
+            display: block;
+        }
+        
+        .question {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            background-color: var(--gray);
+            border: 2px solid var(--gray);
+            border-radius: 8px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option:hover {
+            border-color: var(--primary-light);
+        }
+        
+        .option.selected {
+            background-color: var(--primary-light);
+            border-color: var(--primary-dark);
+            color: var(--white);
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        button:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+            color: #999;
+        }
+        
+        .progress-container {
+            margin: 30px 0 20px;
+            background-color: var(--gray);
+            border-radius: 10px;
+            height: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .final-message {
+            text-align: center;
+            display: none;
+        }
+        
+        .final-message h2 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+        
+        .final-message p {
+            margin-bottom: 20px;
+        }
+        
+        .hearts {
+            font-size: 2rem;
+            color: #ff6b95;
+            margin: 20px 0;
+        }
+        
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        #startQuiz {
+            display: block;
+            margin: 30px auto;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz Especial</h1>
+            <p>Porque você merece ser celebrada não apenas hoje, mas todos os dias</p>
+        </header>
+        
+        <div class="countdown" id="countdown">
+            Contagem regressiva: <span id="days">7</span> dias para uma surpresa especial
+        </div>
+        
+        <div id="intro" class="intro">
+            <p>Olá meu amor! 💜</p>
+            <p>Preparei este quiz especial para descobrir mais sobre você e seus desejos. Suas respostas vão me ajudar a planejar algo incrível para o seu aniversário!</p>
+            <p>São apenas 10 perguntas rápidas. Seja sincera - não existem respostas certas ou erradas.</p>
+            <button id="startQuiz">Começar</button>
+        </div>
+        
+        <div id="quizContainer" style="display: none;">
+            <div class="progress-container">
+                <div class="progress-bar" id="progress"></div>
+            </div>
+            
+            <div id="question1" class="question-container active">
+                <div class="question">1. Qual foi sua primeira impressão sobre mim?</div>
+                <div class="options">
+                    <div class="option" data-question="1" data-option="A">"Ele parecia muito interessante"</div>
+                    <div class="option" data-question="1" data-option="B">"Achei ele engraçado"</div>
+                    <div class="option" data-question="1" data-option="C">"Fiquei curiosa para conhecer mais"</div>
+                    <div class="option" data-question="1" data-option="D">"Não tinha certeza sobre ele no início"</div>
+                </div>
+            </div>
+            
+            <div id="question2" class="question-container">
+                <div class="question">2. Qual é a sua ideia de um encontro perfeito comigo?</div>
+                <div class="options">
+                    <div class="option" data-question="2" data-option="A">Um jantar romântico em um restaurante legal</div>
+                    <div class="option" data-question="2" data-option="B">Netflix e comida delivery em casa</div>
+                    <div class="option" data-question="2" data-option="C">Uma aventura ou experiência nova juntos</div>
+                    <div class="option" data-question="2" data-option="D">Um dia tranquilo na praia ou no parque</div>
+                </div>
+            </div>
+            
+            <div id="question3" class="question-container">
+                <div class="question">3. Qual destas te deixaria mais feliz como surpresa?</div>
+                <div class="options">
+                    <div class="option" data-question="3" data-option="A">Uma carta de amor escrita à mão</div>
+                    <div class="option" data-question="3" data-option="B">Uma viagem de fim de semana</div>
+                    <div class="option" data-question="3" data-option="C">Um presente que você tem dado dicas</div>
+                    <div class="option" data-question="3" data-option="D">Algo feito à mão por mim</div>
+                </div>
+            </div>
+            
+            <div id="question4" class="question-container">
+                <div class="question">4. Qual é sua memória favorita de nós juntos?</div>
+                <div class="options">
+                    <div class="option" data-question="4" data-option="A">Nosso primeiro encontro</div>
+                    <div class="option" data-question="4" data-option="B">Uma viagem especial que fizemos</div>
+                    <div class="option" data-question="4" data-option="C">Um momento simples em casa</div>
+                    <div class="option" data-question="4" data-option="D">Uma celebração ou feriado juntos</div>
+                </div>
+            </div>
+            
+            <div id="question5" class="question-container">
+                <div class="question">5. O que faz você se sentir mais amada?</div>
+                <div class="options">
+                    <div class="option" data-question="5" data-option="A">Quando digo o quanto você significa para mim</div>
+                    <div class="option" data-question="5" data-option="B">Quando faço algo atencioso para você</div>
+                    <div class="option" data-question="5" data-option="C">Quando passamos tempo de qualidade juntos</div>
+                    <div class="option" data-question="5" data-option="D">Quando dou um presente significativo</div>
+                </div>
+            </div>
+            
+            <div id="question6" class="question-container">
+                <div class="question">6. Se pudéssemos viajar para qualquer lugar juntos, para onde você escolheria?</div>
+                <div class="options">
+                    <div class="option" data-question="6" data-option="A">Uma cidade europeia romântica</div>
+                    <div class="option" data-question="6" data-option="B">Um paraíso tropical com praias</div>
+                    <div class="option" data-question="6" data-option="C">Uma aventura na natureza</div>
+                    <div class="option" data-question="6" data-option="D">Algum lugar cultural e histórico</div>
+                </div>
+            </div>
+            
+            <div id="question7" class="question-container">
+                <div class="question">7. Que qualidade você mais ama em si mesma?</div>
+                <div class="options">
+                    <div class="option" data-question="7" data-option="A">Sua bondade</div>
+                    <div class="option" data-question="7" data-option="B">Sua inteligência</div>
+                    <div class="option" data-question="7" data-option="C">Sua criatividade</div>
+                    <div class="option" data-question="7" data-option="D">Sua força</div>
+                </div>
+            </div>
+            
+            <div id="question8" class="question-container">
+                <div class="question">8. O que você sempre quis aprender?</div>
+                <div class="options">
+                    <div class="option" data-question="8" data-option="A">Um novo idioma</div>
+                    <div class="option" data-question="8" data-option="B">Um instrumento musical</div>
+                    <div class="option" data-question="8" data-option="C">Uma habilidade criativa como pintura</div>
+                    <div class="option" data-question="8" data-option="D">Algo atlético ou aventureiro</div>
+                </div>
+            </div>
+            
+            <div id="question9" class="question-container">
+                <div class="question">9. Como você imagina nosso dia perfeito juntos?</div>
+                <div class="options">
+                    <div class="option" data-question="9" data-option="A">Relaxante e tranquilo</div>
+                    <div class="option" data-question="9" data-option="B">Cheio de aventura e emoção</div>
+                    <div class="option" data-question="9" data-option="C">Romântico e íntimo</div>
+                    <div class="option" data-question="9" data-option="D">Divertido e brincalhão</div>
+                </div>
+            </div>
+            
+            <div id="question10" class="question-container">
+                <div class="question">10. O que você gostaria que fizéssemos mais juntos?</div>
+                <div class="options">
+                    <div class="option" data-question="10" data-option="A">Viajar mais</div>
+                    <div class="option" data-question="10" data-option="B">Tentar novas experiências</div>
+                    <div class="option" data-question="10" data-option="C">Ter conversas mais profundas</div>
+                    <div class="option" data-question="10" data-option="D">Criar tradições ou rotinas</div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button id="prev" disabled>Anterior</button>
+                <button id="next">Próxima</button>
+                <button id="submit" style="display: none;">Enviar Respostas</button>
+            </div>
+        </div>
+        
+        <div id="finalMessage" class="final-message">
+            <div class="hearts">❤️ 💜 ❤️</div>
+            <h2>Obrigado, meu amor!</h2>
+            <p>Suas respostas foram enviadas. Agora posso preparar algo muito especial para você.</p>
+            <p>Fique atenta para as próximas surpresas nos próximos dias...</p>
+            <p>A contagem regressiva continua!</p>
+            <div class="hearts">❤️ 💜 ❤️</div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize variables
+            let currentQuestion = 1;
+            const totalQuestions = 10;
+            let answers = {};
+            
+            // DOM elements
+            const startButton = document.getElementById('startQuiz');
+            const intro = document.getElementById('intro');
+            const quizContainer = document.getElementById('quizContainer');
+            const prevButton = document.getElementById('prev');
+            const nextButton = document.getElementById('next');
+            const submitButton = document.getElementById('submit');
+            const progressBar = document.getElementById('progress');
+            const finalMessage = document.getElementById('finalMessage');
+            
+            // Start quiz
+            startButton.addEventListener('click', function() {
+                intro.style.display = 'none';
+                quizContainer.style.display = 'block';
+                updateProgressBar();
+            });
+            
+            // Select option
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const questionNum = this.getAttribute('data-question');
+                    const selectedOption = this.getAttribute('data-option');
+                    
+                    // Remove selection from other options in same question
+                    document.querySelectorAll(`.option[data-question="${questionNum}"]`).forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Add selection to clicked option
+                    this.classList.add('selected');
+                    
+                    // Save answer
+                    answers[questionNum] = selectedOption;
+                    
+                    // Enable next button if disabled
+                    nextButton.disabled = false;
+                });
+            });
+            
+            // Navigate to next question
+            nextButton.addEventListener('click', function() {
+                if (currentQuestion < totalQuestions) {
+                    document.getElementById(`question${currentQuestion}`).classList.remove('active');
+                    currentQuestion++;
+                    document.getElementById(`question${currentQuestion}`).classList.add('active');
+                    
+                    // Enable/disable navigation buttons
+                    prevButton.disabled = false;
+                    
+                    if (currentQuestion === totalQuestions) {
+                        nextButton.style.display = 'none';
+                        submitButton.style.display = 'block';
+                    } else {
+                        nextButton.disabled = !answers[currentQuestion];
+                    }
+                    
+                    updateProgressBar();
+                }
+            });
+            
+            // Navigate to previous question
+            prevButton.addEventListener('click', function() {
+                if (currentQuestion > 1) {
+                    document.getElementById(`question${currentQuestion}`).classList.remove('active');
+                    currentQuestion--;
+                    document.getElementById(`question${currentQuestion}`).classList.add('active');
+                    
+                    // Enable/disable navigation buttons
+                    prevButton.disabled = currentQuestion === 1;
+                    nextButton.disabled = false;
+                    nextButton.style.display = 'block';
+                    submitButton.style.display = 'none';
+                    
+                    updateProgressBar();
+                }
+            });
+            
+            // Submit answers
+            submitButton.addEventListener('click', function() {
+                //  email content
+                let emailBody = "Respostas do Quiz:\n\n";
+                for (let i = 1; i <= totalQuestions; i++) {
+                    const questionText = document.querySelector(`#question${i} .question`).textContent;
+                    const selectedOption = answers[i] || "Não respondida";
+                    let optionText = "Não selecionada";
+                    
+                    if (answers[i]) {
+                        const selectedElement = document.querySelector(`#question${i} .option[data-option="${answers[i]}"]`);
+                        optionText = selectedElement.textContent;
+                    }
+                    
+                    emailBody += `${questionText}\nResposta: ${optionText} (${selectedOption})\n\n`;
+                }
+                
+                // Send email using mailto
+                const subject = "Respostas do Quiz Especial";
+                const encodedSubject = encodeURIComponent(subject);
+                const encodedBody = encodeURIComponent(emailBody);
+                const mailtoLink = `mailto:aeon.reveal462@passinbox.com?subject=${encodedSubject}&body=${encodedBody}`;
+              
+                window.location.href = mailtoLink;
+                
+                quizContainer.style.display = 'none';
+                finalMessage.style.display = 'block';
+            });
+            
+
+            function updateProgressBar() {
+                const progressPercent = ((currentQuestion - 1) / totalQuestions) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+                
+              
+                if (currentQuestion < totalQuestions) {
+                    nextButton.disabled = !answers[currentQuestion];
+                }
+            }
+            
+            // Set up countdown
+            const countdownElement = document.getElementById('days');
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 7);
+            
+            function updateCountdown() {
+                const currentDate = new Date();
+                const difference = targetDate - currentDate;
+                const days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+                countdownElement.textContent = days;
+            }
+            
+            updateCountdown();
+            setInterval(updateCountdown, 1000 * 60 * 60); // Update every hour
+        });
+    </script>
+</body>
+</html>
